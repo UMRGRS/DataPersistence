@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class MainManager : MonoBehaviour
 {
@@ -12,13 +13,18 @@ public class MainManager : MonoBehaviour
 
     public Text ScoreText;
     public GameObject GameOverText;
-    
+    [SerializeField] TMP_Text highScore;
+
     private bool m_Started = false;
     private int m_Points;
     
     private bool m_GameOver = false;
 
     
+    private void Awake()
+    {
+        highScore.text = Manager.instance.bestScoreText;
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -55,9 +61,20 @@ public class MainManager : MonoBehaviour
         }
         else if (m_GameOver)
         {
+            if (m_Points > Manager.instance.points) 
+            {
+                Manager.instance.points = m_Points;
+                Manager.instance.playersNameA = Manager.instance.playersNameB;
+                Manager.instance.Save();
+            }
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            }
+            else if (Input.GetKeyDown(KeyCode.Escape)) 
+            {
+                Debug.Log(Manager.instance.bestScoreText);
+                SceneManager.LoadScene(0);
             }
         }
     }
